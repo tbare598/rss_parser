@@ -2,6 +2,10 @@ var FeedParser = require('feedparser');
 var request = require('request'); // for fetching the feed
 var feedMatchers = require('./feedMatchers').feedMatchers;
 
+// Check feeds every 5 minutes
+checkInterval = 1000 * 60 * 5;
+intervalTolerance = 1000;
+
 function setupFeedWatcher(feedMatcher) {
     var req = request(feedMatcher.url);
     var feedparser = new FeedParser([]);
@@ -26,18 +30,27 @@ function setupFeedWatcher(feedMatcher) {
     });
     
     feedparser.on('readable', function () {
-        // This is where the action is!
         var stream = this; // `this` is `feedparser`, which is a stream
-        var meta = this.meta; // **NOTE** the "meta" is always available in the context of the feedparser instance
+        var meta = this.meta;
         var item;
     
         while (item = stream.read()) {
-            if (feedMatcher.fileRegexes
-                .some(regEx => item.title.match(regEx))) {
-                    feedMatcher.loader(item);
-                }
+            if (feedMatcher.fileRegexes.some(regEx => {
+
+                var publishDate = new Date(item.pubDate);
+                var publishDateDiff = (new Date()).getTime() - publishDate.getTime() + intervalTolerance;
+                return publishDateDiff < checkInterval && item.title.match(regEx);
+	        })) {
+                feedMatcher.loader(item);
+            }
         }
     });
 }
 
-feedMatchers.forEach(feedMatcher => setupFeedWatcher(feedMatcher));
+function checkFeeds() {
+    feedMatchers.forEach(feedMatcher => setupFeedWatcher(feedMatcher));
+}
+
+checkFeeds();
+setInterval(checkFeeds, checkInterval);
+

@@ -1,0 +1,23 @@
+{
+  "name": "rss_parser",
+  "version": "1.0.0",
+  "description": "Simple RSS Parser",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tbare598/rss_parser.git"
+  },
+  "author": "tbare598@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tbare598/rss_parser/issues"
+  },
+  "homepage": "https://github.com/tbare598/rss_parser#readme",
+  "dependencies": {
+    "feedparser": "^2.2.8",
+    "request": "^2.83.0"
+  }
+}
