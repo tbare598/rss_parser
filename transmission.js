@@ -2,7 +2,36 @@ var request = require('request');
 
 var transmissionSessionId = '';
 
-function addTorrent(url, location) {
+function getOptions() {
+    return {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic YWRtaW46YXNkZmFzZGY=',
+            'X-Transmission-Session-Id': transmissionSessionId
+        },
+        uri: 'http://192.168.0.202:9092/transmission/rpc/',
+        body: '',
+        method: 'POST'
+    };
+}
+
+function setTransmissionSessionId(newId) {
+    console.log('Setting transmission session id');
+    if (newId != null) {
+        transmissionSessionId = newId;
+    } else {
+        return new Promise(resolve => request(
+            getOptions(),
+            (error, res) => {
+                transmissionSessionId = res.headers['x-transmission-session-id'];
+                console.log('Transmission session id set');
+                resolve();
+            }
+        ));
+    }
+}
+
+exports.addTorrent = (url, location) => {
     var form = {
         "arguments": {
             "filename": url,
@@ -10,29 +39,33 @@ function addTorrent(url, location) {
         },
         "method": "torrent-add"
     };
-    var formStr = JSON.stringify(form);
+    var options = getOptions();
+    options.body = JSON.stringify(form);
 
-    request(
-        {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Basic YWRtaW46cGFzc3dvcmQ=',
-                'X-Transmission-Session-Id': transmissionSessionId
-            },
-            uri: 'http://192.168.0.202:9092/transmission/rpc/',
-            body: formStr,
-            method: 'POST'
-         },
-        function (error, response, body) {
-            if (!error && response.statusCode == 200) {
-                console.log('File Added To - ' + location)
-                console.log('File Added - ' + url)
-            } else if (error || response.statusCode == 409) {
-                transmissionSessionId = response.headers['x-transmission-session-id'];
-                addTorrent(url, location);
-            }
+    return new Promise(resolve => {
+        var prom = new Promise(resolve => resolve());
+        if (options.headers["X-Transmission-Session-Id"] === '') {
+            prom = setTransmissionSessionId();
         }
-    );
+        prom.then(() => {
+            options.headers["X-Transmission-Session-Id"] = transmissionSessionId;
+            request(
+                options,
+                (error, res) => {
+                    console.log('Response from transmission server:');
+                    console.log('  status code - ' + res.statusCode);
+                    console.log('  message - ' + res.body);
+                    if (!error && res.statusCode == 200) {
+                        console.log('File Added To - ' + location)
+                        console.log('File Added - ' + url)
+                        resolve();
+                    } else if (res.statusCode == 409) {
+                        setTransmissionSessionId(res.headers['x-transmission-session-id']);
+                        exports.addTorrent(url, location)
+                            .then(() => resolve());
+                    }
+                }
+            )
+        });
+    });
 }
-
-exports.addTorrent = addTorrent;

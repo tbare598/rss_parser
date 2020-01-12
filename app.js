@@ -1,10 +1,8 @@
 var FeedParser = require('feedparser');
 var request = require('request'); // for fetching the feed
-var feedMatchers = require('./feedMatchers').feedMatchers;
+var config = require('./config');
 
-// Check feeds every 5 minutes
-checkInterval = 1000 * 60 * 5;
-intervalTolerance = 1000;
+var loaded = [];
 
 function setupFeedWatcher(feedMatcher) {
     var req = request(feedMatcher.url);
@@ -18,9 +16,11 @@ function setupFeedWatcher(feedMatcher) {
         var stream = this; // `this` is `req`, which is a stream
     
         if (res.statusCode !== 200) {
+            console.error('ERROR: Bad status code: ' + res.statusCode);
             this.emit('error', new Error('Bad status code'));
         }
         else {
+            console.log('Successful response from ' + feedMatcher.url)
             stream.pipe(feedparser);
         }
     });
@@ -31,26 +31,30 @@ function setupFeedWatcher(feedMatcher) {
     
     feedparser.on('readable', function () {
         var stream = this; // `this` is `feedparser`, which is a stream
-        var meta = this.meta;
         var item;
     
         while (item = stream.read()) {
-            if (feedMatcher.fileRegexes.some(regEx => {
-
-                var publishDate = new Date(item.pubDate);
-                var publishDateDiff = (new Date()).getTime() - publishDate.getTime() + intervalTolerance;
-                return publishDateDiff < checkInterval && item.title.match(regEx);
-	        })) {
-                feedMatcher.loader(item);
+            var matchedItem = item;
+            if (feedMatcher.fileRegexes
+                .some(re => !loaded.includes(matchedItem.link) && matchedItem.title.match(re))
+	        ) {
+                console.log('Found match on: "' + matchedItem.title + '"');
+                console.log('loaded:' + loaded);
+                feedMatcher.loader(matchedItem.link)
+                    .then(() => {
+                        console.log('Loaded - ' + matchedItem.title);
+                        loaded.push(matchedItem.link);
+                    });
             }
         }
     });
 }
 
 function checkFeeds() {
+    delete require.cache[require.resolve('./feedMatchers')];
+    var feedMatchers = require('./feedMatchers').feedMatchers;
     feedMatchers.forEach(feedMatcher => setupFeedWatcher(feedMatcher));
 }
 
 checkFeeds();
-setInterval(checkFeeds, checkInterval);
-
+setInterval(checkFeeds, config.pollingInterval);
