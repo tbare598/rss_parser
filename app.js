@@ -1,6 +1,7 @@
-var FeedParser = require('feedparser');
-var request = require('request'); // for fetching the feed
-var config = require('./config');
+const FeedParser = require('feedparser');
+const request = require('request'); // for fetching the feed
+const addTorrent = require('./transmission').addTorrent;
+const config = require('./config');
 
 var loaded = [];
 
@@ -32,27 +33,29 @@ function setupFeedWatcher(feedMatcher) {
     feedparser.on('readable', function () {
         var stream = this; // `this` is `feedparser`, which is a stream
         var item;
-    
+
         while (item = stream.read()) {
-            var matchedItem = item;
-            if (feedMatcher.fileRegexes
-                .some(re => !loaded.includes(matchedItem.link) && matchedItem.title.match(re))
-	        ) {
-                console.log('Found match on: "' + matchedItem.title + '"');
-                console.log('loaded:' + loaded);
-                feedMatcher.loader(matchedItem.link)
-                    .then(() => {
-                        console.log('Loaded - ' + matchedItem.title);
-                        loaded.push(matchedItem.link);
-                    });
+            var currItem = item;
+            if (!loaded.includes(currItem.link)) {
+                var matchedFile = feedMatcher.files
+                    .find(file => file.regexes.some(re => currItem.title.match(new RegExp(re))));
+                
+                if (matchedFile != null) {
+                    console.log('Found match on: "' + currItem.title + '"');
+                    addTorrent(currItem.link, matchedFile.loadLocation)
+                        .then(() => {
+                            console.log('Loaded - ' + currItem.title);
+                            loaded.push(currItem.link);
+                        });
+                }
             }
         }
     });
 }
 
 function checkFeeds() {
-    delete require.cache[require.resolve('./feedMatchers')];
-    var feedMatchers = require('./feedMatchers').feedMatchers;
+    delete require.cache[require.resolve('./feedMatchers.json')];
+    var feedMatchers = require('./feedMatchers.json');
     feedMatchers.forEach(feedMatcher => setupFeedWatcher(feedMatcher));
 }
 

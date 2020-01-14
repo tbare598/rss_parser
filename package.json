@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/tbare598/rss_parser#readme",
   "dependencies": {
+    "express": "^4.17.1",
     "feedparser": "^2.2.8",
+    "fs": "0.0.1-security",
     "request": "^2.83.0"
   }
 }

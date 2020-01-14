@@ -1,0 +1,23 @@
+[
+    {
+        "url": "http://horriblesubs.info/rss.php?res=1080",
+        "files": [
+            {
+                "regexes": [ "^\\[HorribleSubs\\] Dr\\. Stone - " ],
+                "loadLocation": "videos/Shows/Dr. Stone"
+            },
+            {
+                "regexes": [ "^\\[HorribleSubs\\] Boku no Hero Academia - " ],
+                "loadLocation": "videos/Shows/Boku no Hero Academia/Season 3"
+            },
+            {
+                "regexes": [ "^\\[HorribleSubs\\] One Piece - " ],
+                "loadLocation": "videos/Shows/One Piece"
+            },
+            {
+                "regexes": [ "^\\[HorribleSubs\\] Dragon Ball Super - " ],
+                "loadLocation": "videos/Shows/Dragon Ball Super"
+            }
+        ]
+    }
+]
