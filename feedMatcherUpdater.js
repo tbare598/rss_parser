@@ -14,8 +14,8 @@ function addFeedMatcher(res, newFeedMatcher) {
     var regexes = newFeedMatcher.regexes;
     var loadLocation = newFeedMatcher.loadLocation;
 
-    delete require.cache[require.resolve('./feedMatchers.test.json')];
-    var feedMatchers = require('./feedMatchers.test.json');
+    delete require.cache[require.resolve('./feedMatchers.json')];
+    var feedMatchers = require('./feedMatchers.json');
 
     var feedMatcher = feedMatchers.find(feedMatcher => feedMatcher.url === rssURL);
     if(feedMatcher == null) {
