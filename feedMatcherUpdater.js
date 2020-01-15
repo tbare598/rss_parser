@@ -31,7 +31,7 @@ function addFeedMatcher(res, newFeedMatcher) {
     });
 
     var data = JSON.stringify(feedMatchers);
-    fs.writeFileSync('feedMatchers.test.json', data);
+    fs.writeFileSync('feedMatchers.json', data);
     res.set({
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': '*',
