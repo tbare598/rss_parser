@@ -15,6 +15,10 @@
                 "loadLocation": "videos/Shows/One Piece"
             },
             {
+                "regexes": [ "^\\[HorribleSubs\\] Eizouken ni wa Te wo Dasu na\\! - " ],
+                "loadLocation": "videos/Shows/Eizouken ni wa Te wo Dasu na!"
+            },
+            {
                 "regexes": [ "^\\[HorribleSubs\\] Dragon Ball Super - " ],
                 "loadLocation": "videos/Shows/Dragon Ball Super"
             }
