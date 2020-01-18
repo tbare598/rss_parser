@@ -1,4 +1,6 @@
 var request = require('request');
+var process = require('process');
+process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
 var transmissionSessionId = '';
 
@@ -9,7 +11,7 @@ function getOptions() {
             'Authorization': 'Basic YWRtaW46YXNkZmFzZGY=',
             'X-Transmission-Session-Id': transmissionSessionId
         },
-        uri: 'http://192.168.0.202:9092/transmission/rpc/',
+        uri: 'https://192.168.0.202:9092/transmission/rpc/',
         body: '',
         method: 'POST'
     };
@@ -32,6 +34,8 @@ function setTransmissionSessionId(newId) {
 }
 
 exports.addTorrent = (url, location) => {
+    console.log("Adding Torrent - " + url);
+    console.log("At Location - " + location);
     var form = {
         "arguments": {
             "filename": url,
@@ -63,6 +67,8 @@ exports.addTorrent = (url, location) => {
                         setTransmissionSessionId(res.headers['x-transmission-session-id']);
                         exports.addTorrent(url, location)
                             .then(() => resolve());
+                    } else {
+                        resolve();
                     }
                 }
             )

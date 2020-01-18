@@ -3,6 +3,7 @@ var path = require('path');
 var fs = require('fs');
 var bodyParser = require('body-parser');
 var config = require('./config');
+var transmission = require('./transmission');
 
 var app = express();
 const PORT = config.port;
@@ -86,6 +87,14 @@ function showFeedMatchers(res) {
     res.send(JSON.stringify(feedMatchers));
 }
 
+function addTorrent(res, newTorrent) {
+    transmission.addTorrent(newTorrent.url, newTorrent.location)
+        .then(() => {
+            console.log('Torrent Added - ' + newTorrent.url);
+            res.send('{ "status" : "Torrent Added" }');
+        });
+}
+
 app.use(function(req, res, next) {
     res.header('Access-Control-Allow-Origin', req.get('Origin') || '*');
     res.header('Access-Control-Allow-Credentials', 'true');
@@ -115,6 +124,11 @@ app.post(
 app.post(
     '/feed-matcher/api/update',
     (req, res) => updateFeedMatcher(res, req.body)
+);
+
+app.post(
+    '/transmission/api/add-torrent',
+    (req, res) => addTorrent(res, req.body)
 );
 
 app.listen(PORT, () => console.log('Server listening on port '+ PORT));
