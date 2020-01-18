@@ -1,0 +1,45 @@
+<div>
+    <link rel="stylesheet" id='download-form-stylesheet' type="text/css">
+    <div id="divExistingMatchers">
+        <table id="tblExistingFeedMatchers" class="tbl-existing-feed-matchers">
+            <thead>
+                <tr>
+                    <th>
+                        RSS URL
+                    </th>
+                    <th>
+                        RegEx
+                    </th>
+                    <th>
+                        Load Location
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="tbodyExistingFeedMatchers">
+            </tbody>
+        </table>
+    </div>
+    <div id="divLoadForm">
+        <div>
+            <label>RSS URL</label>
+            <input id="txtRssUrl" class="dl-form-input">
+        </div>
+        <div>
+            <label>RegExes (separated by semicolons)</label>
+            <input id="txtRegexes" class="dl-form-input">
+        </div>
+        <div>
+            <label>Load Location</label>
+            <input id="txtLoadLocation" class="dl-form-input">
+        </div>
+    </div>
+    
+    <div>    
+        <button id="btnShowExisting" class="btn-feed-matcher">Show Existing</button>
+        <button id="btnUpdate" class="btn-feed-matcher">Update</button>
+    </div>
+    <div> 
+        <span id="spanStatus"></span>
+    </div>
+</div>
+

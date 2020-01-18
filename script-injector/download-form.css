@@ -1,0 +1,18 @@
+.dl-form-input {
+    width: 50%;
+}
+.tbl-existing-feed-matchers {
+    width: 100%;
+}
+.tbl-existing-feed-matchers thead tr {
+    border-bottom: black solid 2px;
+}
+.tbl-existing-feed-matchers tbody tr:hover {
+    background: #d8d8d8;
+    cursor: default;
+}
+.tbl-existing-feed-matchers tbody tr[active] {
+    background: #c3c3c3;
+    border-top: gray solid 1px;
+    border-bottom: gray solid 1px;
+}
