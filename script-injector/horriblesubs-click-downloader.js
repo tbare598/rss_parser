@@ -39,7 +39,6 @@ setTimeout(() => {
         .click(() => {
             setTimeout(() => {	
                 var badges = $('.rls-info-container>.rls-label>.badge:not([click-added])');
-                console.log(badges);
                 badges.click(badgeClicked);
                 badges.attr('click-added', '');
             }, 500);
