@@ -15,20 +15,33 @@ function addTorrent(url, location) {
     });
 }
 
+var badgeClicked = (event) => {
+    const clickedElm = event.target;
+    const episodeContainerElm = clickedElm.parentElement;
+    const elmText = episodeContainerElm.innerText;
+
+    const episodeNumber = episodeContainerElm.parentElement.id;
+    const episodeQuality = clickedElm.innerHTML;
+    const magnetLinkElmId = `${episodeNumber}-${episodeQuality}`;
+    const magnetLinkElm = $(`#${magnetLinkElmId} [title="Magnet Link"]`)[0];
+    const magnetURL = magnetLinkElm.getAttribute('href');
+
+    const showName = elmText.replace(/(((\d\d\/){2}\d\d)|(Today))[\s\n]*(.*) [\d\.]+ .+/, '$5');
+    addTorrent(magnetURL, '/videos/Shows/' + showName);
+};
+
 setTimeout(() => {	
-    $('.rls-info-container>.rls-label>.badge')
-        .click((event) => {
-            const clickedElm = event.target;
-            const episodeContainerElm = clickedElm.parentElement;
-            const elmText = episodeContainerElm.innerText;
+    var badges = $('.rls-info-container>.rls-label>.badge');
+    badges.click(badgeClicked);
+    badges.attr('click-added', '');
 
-            const episodeNumber = episodeContainerElm.parentElement.id;
-            const episodeQuality = clickedElm.innerHTML;
-            const magnetLinkElmId = `${episodeNumber}-${episodeQuality}`;
-            const magnetLinkElm = $(`#${magnetLinkElmId} [title="Magnet Link"]`)[0];
-            const magnetURL = magnetLinkElm.getAttribute('href');
-
-            const showName = elmText.replace(/(((\d\d\/){2}\d\d)|(Today))[\s\n]*(.*) [\d\.]+ .+/, '$5');
-            addTorrent(magnetURL, '/videos/Shows/' + showName);
+    $('.more-button')
+        .click(() => {
+            setTimeout(() => {	
+                var badges = $('.rls-info-container>.rls-label>.badge:not([click-added])');
+                console.log(badges);
+                badges.click(badgeClicked);
+                badges.attr('click-added', '');
+            }, 500);
         });
 }, 2000);
