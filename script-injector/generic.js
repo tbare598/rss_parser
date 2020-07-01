@@ -7,12 +7,21 @@ $script.src = 'https://code.jquery.com/jquery-1.11.0.min.js';
 $script.type = 'text/javascript';
 document.getElementsByTagName('head')[0].appendChild($script);
 
-var dlFormScript = document.createElement('script');
-dlFormScript.src = HOST + '/feed-matcher/src/download-form.js';
-dlFormScript.type = 'text/javascript';
-document.getElementsByTagName('head')[0].appendChild(dlFormScript);
+runScript();
 
-var hsClickDLScript = document.createElement('script');
-hsClickDLScript.src = HOST + '/feed-matcher/src/horriblesubs-click-downloader.js';
-hsClickDLScript.type = 'text/javascript';
-document.getElementsByTagName('head')[0].appendChild(hsClickDLScript);
+function runScript() {
+    if( window.$ ) {
+        var dlFormScript = document.createElement('script');
+        dlFormScript.src = HOST + '/feed-matcher/src/download-form.js';
+        dlFormScript.type = 'text/javascript';
+        document.getElementsByTagName('head')[0].appendChild(dlFormScript);
+        
+        var hsClickDLScript = document.createElement('script');
+        hsClickDLScript.src = HOST + '/feed-matcher/src/horriblesubs-click-downloader.js';
+        hsClickDLScript.type = 'text/javascript';
+        document.getElementsByTagName('head')[0].appendChild(hsClickDLScript);
+    } else {
+        window.setTimeout( runScript, 50 );
+    }
+}
+
