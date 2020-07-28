@@ -6,7 +6,7 @@ function addTorrent(url, location) {
         url: HOST + '/transmission/api/add-torrent',
         data: JSON.stringify({
             url: url,
-            location: "/disk1/transmission/" + location
+            location: location
         }),
         dataType: "json",
         contentType: 'application/json',
@@ -27,7 +27,7 @@ var badgeClicked = (event) => {
     const magnetURL = magnetLinkElm.getAttribute('href');
 
     const showName = elmText.replace(/(((\d\d\/){2}\d\d)|(Today))[\s\n]*(.*) [\d\.]+ .+/, '$5');
-    addTorrent(magnetURL, '/videos/Shows/' + showName);
+    addTorrent(magnetURL, 'videos/Shows/' + showName);
 };
 
 setTimeout(() => {	
